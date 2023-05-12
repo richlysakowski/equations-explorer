@@ -877,8 +877,12 @@ def bs_explorer():
                                     'Vega':vega_list
                                    })
 
-    alternative_osd = pd.melt(alternative_osd_c.append(alternative_osd_p), id_vars = ['C-P', 'Spot'], value_vars = ['Valuation', 'Delta', 'Gamma', 'Vega', 'Rho', 'Theta'])
+    # The following line throws an error due df.append() method being removed in Pandas v2.0.1.  
+    # alternative_osd = pd.melt(alternative_osd_c.append(alternative_osd_p), id_vars = ['C-P', 'Spot'], value_vars = ['Valuation', 'Delta', 'Gamma', 'Vega', 'Rho', 'Theta'])
 
+    # The line below replaces df1.append(df2) with pd.concat(df1, df2) the removed append() method from earlier versions of pandas.
+    alternative_osd = pd.melt(pd.concat([alternative_osd_c, alternative_osd_p]), id_vars = ['C-P', 'Spot'], value_vars = ['Valuation', 'Delta', 'Gamma', 'Vega', 'Rho', 'Theta'])
+    
     valuation_chart = alt.Chart(alternative_osd[(alternative_osd['variable']=='Valuation')]).mark_line().encode(
         x = 'Spot:Q',
         y = alt.Y('value:Q', axis=alt.Axis(title=None)),
